@@ -1,35 +1,30 @@
-CC=gcc
-CFLAGS=-Wall -fopenmp
-LFLAGS=-lfftw3 -lm
 
-all: p3mstandalone
+################################################################################
+#
+# Build script for project
+#
+################################################################################
 
-p3mstandalone: charge-assign.o common.o error.o ewald.o interpol.o io.o p3m-common.o p3m-ik.o realpart.o timings.o p3m-ad.o p3m-ad-i.o p3m-ik-i.o Makefile
-	$(CC) $(CFLAGS) $(LFLAGS) p3m-ad.o p3m-ik-i.o p3m-ad-i.o charge-assign.o common.o error.o ewald.o interpol.o io.o p3m-common.o p3m-ik.o realpart.o main.c -o p3m
+EXECUTABLE	:= p3mstandalone
+# CUDA source files (compiled with cudacc)
+CUFILES		:= 
+# CUDA dependency files
+CU_DEPS		:=
 
-charge-assign.o: charge-assign.c charge-assign.h
-	$(CC) -c $(CFLAGS) charge-assign.c
-common.o: common.c common.h
-	$(CC) -c $(CFLAGS) common.c
-error.o: error.c error.h
-	$(CC) -c $(CFLAGS) error.c
-ewald.o: ewald.c ewald.h
-	$(CC) -c $(CFLAGS) ewald.c
-interpol.o: interpol.c interpol.h
-	$(CC) -c $(CFLAGS) interpol.c
-io.o: io.c io.h
-	$(CC) -c $(CFLAGS) io.c
-p3m-common.o: p3m-common.c p3m-common.h
-	$(CC) -c $(CFLAGS) p3m-common.c
-p3m-ik.o: p3m-ik.c p3m-ik.h
-	$(CC) -c $(CFLAGS) p3m-ik.c
-p3m-ad.o: p3m-ad.c p3m-ad.h
-	$(CC) -c $(CFLAGS) p3m-ad.c
-p3m-ik-i.o: p3m-ik-i.c p3m-ik-i.h
-	$(CC) -c $(CFLAGS) p3m-ik-i.c
-p3m-ad-i.o: p3m-ad-i.c p3m-ad-i.h
-	$(CC) -c $(CFLAGS) p3m-ad-i.c
-realpart.o: realpart.c realpart.h
-	$(CC) -c $(CFLAGS) realpart.c
+# C/C++ source files (compiled with gcc / c++)
+CFILES		:= main.c charge-assign.c error.c ewald.c interpol.c io.c p3m-common.c p3m-ik.c p3m-ad.c p3m-ik-i.c p3m-ad-i.c realpart.c common.c
 
-.PHONY = all
+ROOTBINDIR := bin
+
+# LIBS = -lefence
+
+################################################################################
+# Rules and targets
+#CUDACCFLAGS=--maxrregcount=40
+CUDACCFLAGS=--ptxas-options=-v -g -G
+ROOTDIR=/auto.anoa/home/dominic/NVIDIA_GPU_Computing_SDK_2_3/C/src
+include $(ROOTDIR)/../common/common.mk
+
+CFLAGS=-std=gnu99 -g -Wall -DHAVE_OMP -fopenmp
+LIB+=-lfftw3 -lm -fopenmp
+

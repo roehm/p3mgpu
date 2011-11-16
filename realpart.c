@@ -6,7 +6,7 @@
 #include "realpart.h"
 
 
-inline FLOAT_TYPE AS_erfc_part(double d)
+FLOAT_TYPE AS_erfc_part(double d)
 {
 #define AS_a1  0.254829592
 #define AS_a2 -0.284496736
